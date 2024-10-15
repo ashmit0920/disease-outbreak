@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
 
@@ -30,10 +31,19 @@ model.add(LSTM(units=50, return_sequences=True, input_shape=(X.shape[1], 1)))
 model.add(LSTM(units=50))
 model.add(Dense(1))
 
-# Compile and train the model
 model.compile(optimizer='adam', loss='mean_squared_error')
 model.fit(X, y, epochs=20, batch_size=32)
 
 # Predict the next day's search interest
 predicted_search_interest = model.predict(X)
 predicted_search_interest = scaler.inverse_transform(predicted_search_interest)
+
+predicted_search_interest = np.round(predicted_search_interest, 0).astype(int)
+# print(predicted_search_interest)
+mse = mean_squared_error(y, predicted_search_interest)
+mae = mean_absolute_error(y, predicted_search_interest)
+r2 = r2_score(y, predicted_search_interest)
+
+print(f"Mean Squared Error: {mse}")
+print(f"Mean Absolute Error: {mae}")
+print(f"R-squared: {r2}")
