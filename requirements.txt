@@ -6,3 +6,5 @@ matplotlib
 pytrends
 streamlit
 tweepy
+requests
+beautifulsoup4
