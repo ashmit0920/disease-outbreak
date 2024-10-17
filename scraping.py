@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
-import csv
 import pandas as pd
+from datetime import datetime
 
 url = 'https://news.google.com/search?q=malaria+outbreaks'
 
@@ -26,12 +26,12 @@ for article in articles:
     date = article.find('time', class_ = "hvbAAd")['datetime'][0:10]
 
     # Search for outbreak-related keywords in the headline or summary
-    keywords = ['outbreak', 'epidemic', 'rise', 'increase', 'double', 'triple']
+    keywords = ['outbreak', 'epidemic', 'rise', 'increase', 'double', 'triple', 'spread', 'surge', 'cases']
     if any(keyword.lower() in (headline ).lower() for keyword in keywords):
         outbreak_articles.append({
             'headline': headline,
             'link': full_link,
-            'date': date
+            'date': datetime.strptime(date, "%Y-%m-%d").date()
         })
 
 print(f"Scraped {len(outbreak_articles)} articles related to outbreaks.")
