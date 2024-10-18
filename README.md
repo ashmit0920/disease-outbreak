@@ -8,6 +8,8 @@ Trigger an alert whenever an outbreak of a particular epidemic is detected.
 - [x] Detect anomalies/peaks using Z score - works good
 - [x] Directly set a search interest threshold for anomalies - could work for specific epidemics and time ranges
 - [ ] Detect anomalies/peaks using logistic regression
-- [ ] Web interface
+- [x] Web interface
 - [ ] Email alerts
-- [ ] Analyze twitter trends
+- [x] Scraping news articles and flagging spikes - works good
+- [ ] Population density map based alerts
+- [ ] Epidemiological data based insights
