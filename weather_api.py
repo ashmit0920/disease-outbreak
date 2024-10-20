@@ -1,6 +1,8 @@
 import requests
+import numpy as np
 import os
 from dotenv import load_dotenv
+from weather_classification import classifier_model
 
 load_dotenv()
 API_KEY = os.getenv("WEATHER_API")
@@ -35,6 +37,43 @@ def fetch_weather_data(city):
         print(f"An error occurred: {e}")
         return None
 
-# Fetch the current weather data
+
+# min and max values of each feature from the training data
+min_values = {'temperature': -10, 'humidity': 0.002, 'precipitation': 0.000425, 'wind_speed': 0.00669, 'air_pressure': 950}
+max_values = {'temperature': 40, 'humidity': 100, 'precipitation': 100, 'wind_speed': 100, 'air_pressure': 1050}
+
+def normalize_value(value, min_value, max_value):
+    return (value - min_value) / (max_value - min_value)
+
+def normalize_real_time_data(weather_data):
+    normalized_data = {}
+    normalized_data['temperature'] = normalize_value(weather_data['temperature'], min_values['temperature'], max_values['temperature'])
+    normalized_data['humidity'] = normalize_value(weather_data['humidity'], min_values['humidity'], max_values['humidity'])
+    normalized_data['wind_speed'] = normalize_value(weather_data['wind_speed'], min_values['wind_speed'], max_values['wind_speed'])
+    normalized_data['air_pressure'] = normalize_value(weather_data['air_pressure'], min_values['air_pressure'], max_values['air_pressure'])
+    normalized_data['precipitation'] = normalize_value(weather_data['precipitation'], min_values['precipitation'], max_values['precipitation'])
+    return normalized_data
+
+# Fetch real-time weather data
 current_weather = fetch_weather_data(CITY)
-print(current_weather)
+
+if current_weather:
+    # Normalize the real-time data
+    normalized_weather_data = normalize_real_time_data(current_weather)
+
+    # Convert to numpy array for model prediction
+    features = np.array([[normalized_weather_data['temperature'],
+                          normalized_weather_data['humidity'],
+                          normalized_weather_data['precipitation'],
+                          normalized_weather_data['wind_speed'],
+                          normalized_weather_data['air_pressure']]])
+
+    # Make a prediction using the model
+    clf = classifier_model()
+
+    prediction = clf.predict(features)
+
+    if prediction[0] == 1:
+        print("Risk of vector-borne disease spread!")
+    else:
+        print("No immediate risk of vector-borne disease spread.")
