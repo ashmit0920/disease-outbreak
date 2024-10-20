@@ -8,3 +8,4 @@ streamlit
 tweepy
 requests
 beautifulsoup4
+rasterio
